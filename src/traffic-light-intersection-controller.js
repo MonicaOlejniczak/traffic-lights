@@ -8,7 +8,7 @@ const TrafficLightIntersection = require('./traffic-light-intersection')
  */
 function defaultConfig() {
   return {
-    clock: setTimeout,
+    clock: { setTimeout, clearTimeout },
     onTrafficLightChange: () => {},
     turnDuration: 1000 * 60 * 5, // 5 minutes before lights automatically switch
     yellowDuration: 1000 * 30    // Yellow light is on for 30 seconds before switching to red
