@@ -111,9 +111,9 @@ class TrafficLightIntersectionController {
    * @private
    */
   advanceToNextState() {
-    this.intersection = this.getNextState(this.intersection.getState())
+    this.intersection = this.getNextState(this.intersection)
     if (this.onTrafficLightChange) {
-      this.onTrafficLightChange(this.intersection.getState())
+      this.onTrafficLightChange(this.intersection)
     }
   }
 

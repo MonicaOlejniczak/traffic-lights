@@ -35,15 +35,10 @@ class TrafficLightIntersection {
    * @param state
    */
   constructor(state) {
-    this.state = state
-  }
-
-  setState(state) {
-    this.state = state
-  }
-
-  getState() {
-    return this.state
+    this[TrafficLights.North] = state[TrafficLights.North]
+    this[TrafficLights.East] = state[TrafficLights.East]
+    this[TrafficLights.South] = state[TrafficLights.South]
+    this[TrafficLights.West] = state[TrafficLights.West]
   }
 
 }

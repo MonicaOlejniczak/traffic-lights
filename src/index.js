@@ -43,7 +43,7 @@ const controller = TrafficLightIntersectionController.of(intersection, {
 })
 
 console.log('Starting simulation...')
-results.push(getResult(intersection.getState()))
+results.push(getResult(intersection))
 
 // Start the simulation, fast forward it by the duration config (30 minutes) and then stop the simulation.
 controller.start()
