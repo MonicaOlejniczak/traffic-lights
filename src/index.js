@@ -11,8 +11,8 @@ const controller = TrafficLightIntersectionController.of(intersection, {
   duration: config.duration,
   turnDuration: config.turnDuration,
   yellowDuration: config.yellowDuration,
-  callback: (elapsed, state) => {
-    console.log(`Elapsed: ${elapsed / 1000} seconds`)
+  callback: (state) => {
+    console.log(`Elapsed: ${Date.now() / 1000} seconds`)
     console.log(`North: ${state[TrafficLights.North]}`)
     console.log(`East: ${state[TrafficLights.East]}`)
     console.log(`South: ${state[TrafficLights.South]}`)

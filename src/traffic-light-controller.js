@@ -25,35 +25,21 @@ class TrafficLightIntersectionController {
     const { clock, turnDuration, yellowDuration } = this.config
     while (elapsed < this.config.duration) {
       elapsed += turnDuration - yellowDuration
-      clock.setTimeout(function (elapsed) {
-        this.tick(elapsed)
-      }.bind(this, elapsed), elapsed)
+      clock.setTimeout(() => this.step(), elapsed)
       elapsed += yellowDuration
-      clock.setTimeout(function (elapsed) {
-        this.tick(elapsed)
-      }.bind(this, elapsed), elapsed)
+      clock.setTimeout(() => this.step(), elapsed)
     }
   }
 
-  tick(elapsed) {
+  step() {
     const currentState = this.intersection.getState()
-    const newState = this.getState(currentState, elapsed)
+    const newState = this.getNextState(currentState)
     if (currentState !== newState) {
       this.intersection.setState(newState)
       if (this.config.callback) {
-        this.config.callback(elapsed, newState)
+        this.config.callback(newState)
       }
     }
-  }
-
-  getState(state, elapsed) {
-    // Validate that we are changing state and then retrieve the next state.
-    if (elapsed % (this.config.turnDuration - this.config.yellowDuration) === 0
-      || elapsed % this.config.turnDuration === 0) {
-      return this.getNextState(state)
-    }
-
-    return state;
   }
 
   getNextState(state) {
