@@ -1,5 +1,5 @@
 const { TrafficLightColor, TrafficLights } = require('./traffic-light.types')
-const TrafficLightIntersection = require('./traffic-light')
+const TrafficLightIntersection = require('./traffic-light-intersection')
 
 /**
  * Default config for the traffic light intersection controller factory function.

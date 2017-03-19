@@ -6,8 +6,8 @@ const { expect } = chai
 chai.use(sinonChai)
 
 const { TrafficLights, TrafficLightColor } = require('./traffic-light.types')
-const TrafficLightIntersection = require('./traffic-light')
-const TrafficLightIntersectionController = require('./traffic-light-controller')
+const TrafficLightIntersection = require('./traffic-light-intersection')
+const TrafficLightIntersectionController = require('./traffic-light-intersection-controller')
 
 const { North, East, South, West } = TrafficLights
 const { Green, Yellow, Red } = TrafficLightColor
