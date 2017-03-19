@@ -9,6 +9,13 @@ const config = {
   yellowDuration: 1000 * 30    // Yellow light is on for 30 seconds before switching to red
 }
 
+function outputState(state) {
+  console.log(`North: ${state[TrafficLights.North]}`)
+  console.log(`East: ${state[TrafficLights.East]}`)
+  console.log(`South: ${state[TrafficLights.South]}`)
+  console.log(`West: ${state[TrafficLights.West]}\n`)
+}
+
 const intersection = TrafficLightIntersection.of()
 const clock = sinon.useFakeTimers()
 const controller = TrafficLightIntersectionController.of(intersection, {
@@ -17,14 +24,14 @@ const controller = TrafficLightIntersectionController.of(intersection, {
   yellowDuration: config.yellowDuration,
   callback: (state) => {
     console.log(`Elapsed: ${Date.now() / 1000} seconds`)
-    console.log(`North: ${state[TrafficLights.North]}`)
-    console.log(`East: ${state[TrafficLights.East]}`)
-    console.log(`South: ${state[TrafficLights.South]}`)
-    console.log(`West: ${state[TrafficLights.West]}\n`)
+    outputState(state)
   }
 })
 
-console.log('Starting simulation')
+console.log('Starting simulation\n')
+console.log('Starting configuration:')
+outputState(intersection.getState())
+
 controller.start()
 clock.tick(config.duration)
 controller.stop()
