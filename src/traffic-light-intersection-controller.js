@@ -49,6 +49,7 @@ class TrafficLightIntersectionController {
    */
   constructor({ clock, intersection, onTrafficLightChange, turnDuration, yellowDuration }) {
     this.clock = clock
+    this.clearPendingStep = () => {}
     this.intersection = intersection
     this.onTrafficLightChange = onTrafficLightChange
     this.turnDuration = turnDuration
@@ -66,9 +67,7 @@ class TrafficLightIntersectionController {
    * Stop the simulation by destroying any existing timers.
    */
   stop() {
-    if (this.clearPendingStep) {
-      this.clearPendingStep()
-    }
+    this.clearPendingStep()
   }
 
   /**
