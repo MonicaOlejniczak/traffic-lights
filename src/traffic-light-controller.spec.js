@@ -46,7 +46,7 @@ describe('traffic lights', function() {
     clock.restore()
   })
 
-  it('should automatically change the lights from green to red every five minutes', function () {
+  it('should automatically change the lights from green to red after five minutes', function () {
     controller.start()
     clock.tick(turnDuration)
     controller.stop()
