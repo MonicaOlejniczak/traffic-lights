@@ -3,7 +3,6 @@ const { TrafficLightColor, TrafficLights } = require('./traffic-light.models')
 function defaultConfig() {
   return {
     clock: setTimeout,
-    duration: 1000 * 60 * 30,    // 30 minutes duration
     turnDuration: 1000 * 60 * 5, // 5 minutes before lights automatically switch
     yellowDuration: 1000 * 30    // Yellow light is on for 30 seconds before switching to red
   };
@@ -21,17 +20,32 @@ class TrafficLightIntersectionController {
   }
 
   start() {
-    let elapsed = 0
-    const { clock, turnDuration, yellowDuration } = this.config
-    while (elapsed < this.config.duration) {
-      elapsed += turnDuration - yellowDuration
-      clock.setTimeout(() => this.step(), elapsed)
-      elapsed += yellowDuration
-      clock.setTimeout(() => this.step(), elapsed)
+    this.step()
+  }
+
+  stop() {
+    if (this.destroy) {
+      this.destroy()
     }
   }
 
   step() {
+    const { clock, turnDuration, yellowDuration } = this.config
+    const timeout1 = clock.setTimeout(() => {
+      this.advanceToNextState()
+    }, turnDuration - yellowDuration)
+    const timeout2 = clock.setTimeout(() => {
+      this.advanceToNextState()
+      this.step()
+    }, turnDuration)
+
+    this.destroy = () => {
+      clock.clearTimeout(timeout1)
+      clock.clearTimeout(timeout2)
+    }
+  }
+
+  advanceToNextState() {
     const currentState = this.intersection.getState()
     const newState = this.getNextState(currentState)
     if (currentState !== newState) {

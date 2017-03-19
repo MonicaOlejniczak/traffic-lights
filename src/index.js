@@ -8,7 +8,6 @@ const intersection = TrafficLightIntersection.of()
 const clock = sinon.useFakeTimers()
 const controller = TrafficLightIntersectionController.of(intersection, {
   clock,
-  duration: config.duration,
   turnDuration: config.turnDuration,
   yellowDuration: config.yellowDuration,
   callback: (state) => {
@@ -23,4 +22,5 @@ const controller = TrafficLightIntersectionController.of(intersection, {
 console.log('Starting simulation')
 controller.start()
 clock.tick(config.duration)
+controller.stop()
 
