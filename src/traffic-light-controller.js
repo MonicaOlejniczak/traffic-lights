@@ -1,4 +1,5 @@
 const { TrafficLightColor, TrafficLights } = require('./traffic-light.models')
+const TrafficLightIntersection = require('./traffic-light')
 
 /**
  * Default config for the traffic light intersection controller factory function.
@@ -110,13 +111,9 @@ class TrafficLightIntersectionController {
    * @private
    */
   advanceToNextState() {
-    const currentState = this.intersection.getState()
-    const newState = this.getNextState(currentState)
-    if (currentState !== newState) {
-      this.intersection.setState(newState)
-      if (this.onTrafficLightChange) {
-        this.onTrafficLightChange(newState)
-      }
+    this.intersection = this.getNextState(this.intersection.getState())
+    if (this.onTrafficLightChange) {
+      this.onTrafficLightChange(this.intersection.getState())
     }
   }
 
@@ -127,7 +124,7 @@ class TrafficLightIntersectionController {
    *
    * @private
    * @param state
-   * @returns {{}}
+   * @returns {TrafficLightIntersection}
    */
   getNextState(state) {
     const getNextTrafficLightColor = (color, adjacentColor) => {
@@ -141,12 +138,12 @@ class TrafficLightIntersectionController {
       return color
     }
 
-    return {
+    return TrafficLightIntersection.of({
       [TrafficLights.North]: getNextTrafficLightColor(state[TrafficLights.North], state[TrafficLights.East]),
       [TrafficLights.East]: getNextTrafficLightColor(state[TrafficLights.East], state[TrafficLights.South]),
       [TrafficLights.South]: getNextTrafficLightColor(state[TrafficLights.South], state[TrafficLights.West]),
       [TrafficLights.West]: getNextTrafficLightColor(state[TrafficLights.West], state[TrafficLights.North])
-    };
+    });
   }
 
 }
