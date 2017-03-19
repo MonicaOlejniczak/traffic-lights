@@ -14,37 +14,45 @@ const { Green, Yellow, Red } = TrafficLightColor
 
 describe('traffic lights', function() {
 
-  function createIntersectionController(onTrafficLightChange) {
-    const intersection = new TrafficLightIntersection({
+  let clock
+  let controller
+  let intersection
+  let onTrafficLightChange
+  let turnDuration
+  let yellowDuration
+
+  beforeEach(function () {
+    clock = sinon.useFakeTimers()
+    intersection = new TrafficLightIntersection({
       [North]: TrafficLightColor.Green,
       [East]: TrafficLightColor.Red,
       [South]: TrafficLightColor.Green,
       [West]: TrafficLightColor.Red
     })
+    onTrafficLightChange = sinon.spy()
+    turnDuration = 1000 * 60 * 5
+    yellowDuration = 1000 * 30
 
-    const config = {
-      clock: sinon.useFakeTimers(),
+    controller = new TrafficLightIntersectionController({
+      clock,
       intersection,
       onTrafficLightChange,
-      turnDuration: 1000 * 60 * 5,
-      yellowDuration: 1000 * 30
-    }
+      turnDuration,
+      yellowDuration
+    })
+  })
 
-    const controller = new TrafficLightIntersectionController(config)
-
-    return { config, controller }
-  }
+  afterEach(function () {
+    clock.restore()
+  })
 
   it('should automatically change the lights from green to red every five minutes', function () {
-    const spy = sinon.spy()
-    const { config, controller } = createIntersectionController(spy)
-
     controller.start()
-    config.clock.tick(config.turnDuration)
+    clock.tick(turnDuration)
     controller.stop()
 
-    expect(spy).to.be.calledTwice // Green -> Yellow -> Red
-    expect(spy).to.be.calledWith({
+    expect(onTrafficLightChange).to.be.calledTwice // Green -> Yellow -> Red
+    expect(onTrafficLightChange).to.be.calledWith({
       [North]: Red,
       [East]: Green,
       [South]: Red,
@@ -53,26 +61,20 @@ describe('traffic lights', function() {
   })
 
   it('should not change traffic light colors one second before (turnDuration - yellowDuration)', function () {
-    const spy = sinon.spy()
-    const { config, controller } = createIntersectionController(spy)
-
     controller.start()
-    config.clock.tick(config.turnDuration - config.yellowDuration - 1)
+    clock.tick(turnDuration - yellowDuration - 1)
     controller.stop()
 
-    expect(spy).to.be.not.be.called
+    expect(onTrafficLightChange).to.be.not.be.called
   })
 
   it('should change the lights from green to yellow and the other remain red at (turnDuration - yellowDuration)', function () {
-    const spy = sinon.spy()
-    const { config, controller } = createIntersectionController(spy)
-
     controller.start()
-    config.clock.tick(config.turnDuration - config.yellowDuration)
+    clock.tick(turnDuration - yellowDuration)
     controller.stop()
 
-    expect(spy).to.be.calledOnce // Green -> Yellow
-    expect(spy).to.be.calledWith({
+    expect(onTrafficLightChange).to.be.calledOnce // Green -> Yellow
+    expect(onTrafficLightChange).to.be.calledWith({
       [North]: Yellow,
       [East]: Red,
       [South]: Yellow,
@@ -81,21 +83,18 @@ describe('traffic lights', function() {
   })
 
   it('should display the red light for yellow duration prior to switching to red', function () {
-    const spy = sinon.spy()
-    const { config, controller } = createIntersectionController(spy)
-
     controller.start()
 
-    config.clock.tick(config.turnDuration - config.yellowDuration)
-    expect(spy).to.be.calledWith({
+    clock.tick(turnDuration - yellowDuration)
+    expect(onTrafficLightChange).to.be.calledWith({
       [North]: Yellow,
       [East]: Red,
       [South]: Yellow,
       [West]: Red
     })
 
-    config.clock.tick(config.yellowDuration)
-    expect(spy).to.be.calledWith({
+    clock.tick(yellowDuration)
+    expect(onTrafficLightChange).to.be.calledWith({
       [North]: Red,
       [East]: Green,
       [South]: Red,
@@ -104,26 +103,21 @@ describe('traffic lights', function() {
 
     controller.stop()
 
-    expect(spy).to.be.calledTwice
+    expect(onTrafficLightChange).to.be.calledTwice
 
   })
 
   it('should not change state when the controller has stopped', function () {
-    const spy = sinon.spy()
-    const { config, controller } = createIntersectionController(spy)
     controller.start()
     controller.stop()
-    config.clock.tick(1)
+    clock.tick(1)
 
-    expect(spy).to.not.have.been.called
+    expect(onTrafficLightChange).to.not.have.been.called
   })
 
-  it('should output as expected for thirty minutes with default config', function () {
-    const spy = sinon.spy()
-    const { config, controller } = createIntersectionController(spy)
-
+  it('should output as expected for thirty minutes with default options', function () {
     controller.start()
-    config.clock.tick(1000 * 60 * 30)
+    clock.tick(1000 * 60 * 30)
     controller.stop()
 
     const getOutput = (north, east, south, west) => {
@@ -135,7 +129,7 @@ describe('traffic lights', function() {
       }
     }
 
-    const calls = spy.getCalls()
+    const calls = onTrafficLightChange.getCalls()
     const input = calls.map(call => call.args[0])
     const output = [
       getOutput(Yellow, Red, Yellow, Red), // 1
