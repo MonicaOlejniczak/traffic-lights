@@ -14,7 +14,7 @@ const { Green, Yellow, Red } = TrafficLightColor
 
 describe('traffic lights', function() {
 
-  function createIntersectionController(callback) {
+  function createIntersectionController(onTrafficLightChange) {
     const intersection = new TrafficLightIntersection({
       [North]: TrafficLightColor.Green,
       [East]: TrafficLightColor.Red,
@@ -24,13 +24,13 @@ describe('traffic lights', function() {
 
     const config = {
       clock: sinon.useFakeTimers(),
-      duration: 1000 * 60 * 30,
+      intersection,
+      onTrafficLightChange,
       turnDuration: 1000 * 60 * 5,
-      yellowDuration: 1000 * 30,
-      callback
+      yellowDuration: 1000 * 30
     }
 
-    const controller = new TrafficLightIntersectionController(intersection, config)
+    const controller = new TrafficLightIntersectionController(config)
 
     return { config, controller }
   }
@@ -123,7 +123,7 @@ describe('traffic lights', function() {
     const { config, controller } = createIntersectionController(spy)
 
     controller.start()
-    config.clock.tick(config.duration)
+    config.clock.tick(1000 * 60 * 30)
     controller.stop()
 
     const getOutput = (north, east, south, west) => {

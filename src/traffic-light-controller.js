@@ -3,6 +3,7 @@ const { TrafficLightColor, TrafficLights } = require('./traffic-light.models')
 function defaultConfig() {
   return {
     clock: setTimeout,
+    onTrafficLightChange: () => {},
     turnDuration: 1000 * 60 * 5, // 5 minutes before lights automatically switch
     yellowDuration: 1000 * 30    // Yellow light is on for 30 seconds before switching to red
   };
@@ -11,12 +12,23 @@ function defaultConfig() {
 class TrafficLightIntersectionController {
 
   static of(intersection, config = defaultConfig()) {
-    return new TrafficLightIntersectionController(intersection, config)
+    const { clock, onTrafficLightChange, turnDuration, yellowDuration } = config
+    const options = {
+      clock,
+      intersection,
+      onTrafficLightChange,
+      turnDuration,
+      yellowDuration
+    }
+    return new TrafficLightIntersectionController(options)
   }
 
-  constructor(intersection, config) {
+  constructor({ clock, intersection, onTrafficLightChange, turnDuration, yellowDuration }) {
+    this.clock = clock
     this.intersection = intersection
-    this.config = config
+    this.onTrafficLightChange = onTrafficLightChange
+    this.turnDuration = turnDuration
+    this.yellowDuration = yellowDuration
   }
 
   start() {
@@ -30,7 +42,7 @@ class TrafficLightIntersectionController {
   }
 
   step() {
-    const { clock, turnDuration, yellowDuration } = this.config
+    const { clock, turnDuration, yellowDuration } = this
     const timeout1 = clock.setTimeout(() => {
       this.advanceToNextState()
     }, turnDuration - yellowDuration)
@@ -50,8 +62,8 @@ class TrafficLightIntersectionController {
     const newState = this.getNextState(currentState)
     if (currentState !== newState) {
       this.intersection.setState(newState)
-      if (this.config.callback) {
-        this.config.callback(newState)
+      if (this.onTrafficLightChange) {
+        this.onTrafficLightChange(newState)
       }
     }
   }
