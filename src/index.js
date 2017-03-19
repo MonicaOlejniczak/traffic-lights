@@ -1,8 +1,13 @@
 const sinon = require('sinon')
-const config = require('./config');
 const TrafficLightIntersection = require('./traffic-light')
 const TrafficLightIntersectionController = require('./traffic-light-controller')
 const { TrafficLights } = require('./traffic-light.models')
+
+const config = {
+  duration: 1000 * 60 * 30,    // 30 minute duration
+  turnDuration: 1000 * 60 * 5, // 5 minutes before lights automatically switch
+  yellowDuration: 1000 * 30    // Yellow light is on for 30 seconds before switching to red
+}
 
 const intersection = TrafficLightIntersection.of()
 const clock = sinon.useFakeTimers()
