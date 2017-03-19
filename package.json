@@ -2,9 +2,9 @@
   "name": "traffic-lights",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/simulation.js",
   "scripts": {
-    "start": "node ./src/index.js",
+    "start": "node ./src/simulation.js",
     "test": "mocha ./src/**/*.spec.js"
   },
   "author": "Monica Olejniczak",
