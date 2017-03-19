@@ -66,8 +66,8 @@ class TrafficLightIntersectionController {
    * Stop the simulation by destroying any existing timers.
    */
   stop() {
-    if (this.destroy) {
-      this.destroy()
+    if (this.clearPendingStep) {
+      this.clearPendingStep()
     }
   }
 
@@ -97,8 +97,8 @@ class TrafficLightIntersectionController {
       this.step()
     }, turnDuration)
 
-    // Set the destroy function to clear the existing timeouts, which is used in the stop method.
-    this.destroy = () => {
+    // Set the clearPendingStep function to clear the existing timeouts, which is used in the stop method.
+    this.clearPendingStep = () => {
       clock.clearTimeout(timeout1)
       clock.clearTimeout(timeout2)
     }
