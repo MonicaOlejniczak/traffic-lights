@@ -23,7 +23,7 @@ class TrafficLightIntersection {
     this.state = state
   }
 
-  getState(state) {
+  getState() {
     return this.state
   }
 
