@@ -11,11 +11,11 @@ function defaultState() {
 
 class TrafficLightIntersection {
 
-  static of(state) {
+  static of(state = defaultState()) {
     return new TrafficLightIntersection(state)
   }
 
-  constructor(state = defaultState()) {
+  constructor(state) {
     this.state = state
   }
 

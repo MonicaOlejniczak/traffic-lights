@@ -11,11 +11,11 @@ function defaultConfig() {
 
 class TrafficLightIntersectionController {
 
-  static of(intersection, config) {
+  static of(intersection, config = defaultConfig()) {
     return new TrafficLightIntersectionController(intersection, config)
   }
 
-  constructor(intersection, config = defaultConfig()) {
+  constructor(intersection, config) {
     this.intersection = intersection
     this.config = config
   }
