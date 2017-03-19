@@ -5,7 +5,7 @@ function defaultState() {
     [TrafficLights.North]: TrafficLightColor.Green,
     [TrafficLights.East]: TrafficLightColor.Red,
     [TrafficLights.South]: TrafficLightColor.Green,
-    [TrafficLights.West]: TrafficLightColor.Red,
+    [TrafficLights.West]: TrafficLightColor.Red
   };
 }
 
