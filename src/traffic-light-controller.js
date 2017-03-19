@@ -1,4 +1,4 @@
-const { TrafficLightColor, TrafficLights } = require('./traffic-light.models')
+const { TrafficLightColor, TrafficLights } = require('./traffic-light.types')
 const TrafficLightIntersection = require('./traffic-light')
 
 /**

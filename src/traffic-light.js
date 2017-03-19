@@ -1,4 +1,4 @@
-const { TrafficLightColor, TrafficLights } = require('./traffic-light.models')
+const { TrafficLightColor, TrafficLights } = require('./traffic-light.types')
 
 /**
  * Default state of the traffic light intersection used by the factory function.

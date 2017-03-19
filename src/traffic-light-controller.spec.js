@@ -5,7 +5,7 @@ const sinonChai = require('sinon-chai')
 const { expect } = chai
 chai.use(sinonChai)
 
-const { TrafficLights, TrafficLightColor } = require('./traffic-light.models')
+const { TrafficLights, TrafficLightColor } = require('./traffic-light.types')
 const TrafficLightIntersection = require('./traffic-light')
 const TrafficLightIntersectionController = require('./traffic-light-controller')
 

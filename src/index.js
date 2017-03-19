@@ -2,7 +2,7 @@ const sinon = require('sinon')
 const Table = require('easy-table')
 const TrafficLightIntersection = require('./traffic-light')
 const TrafficLightIntersectionController = require('./traffic-light-controller')
-const { TrafficLights } = require('./traffic-light.models')
+const { TrafficLights } = require('./traffic-light.types')
 
 // Default config specified by the information given.
 const config = {
