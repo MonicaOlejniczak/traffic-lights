@@ -9,20 +9,22 @@ const { TrafficLights, TrafficLightColor } = require('./traffic-light.models')
 const TrafficLightIntersection = require('./traffic-light')
 const TrafficLightIntersectionController = require('./traffic-light-controller')
 
-const { Green, Yellow, Red } = TrafficLightColor;
+const { North, East, South, West } = TrafficLights
+const { Green, Yellow, Red } = TrafficLightColor
 
 describe('traffic lights', function() {
 
   function createIntersectionController(callback) {
     const intersection = new TrafficLightIntersection({
-      [TrafficLights.North]: TrafficLightColor.Green,
-      [TrafficLights.East]: TrafficLightColor.Red,
-      [TrafficLights.South]: TrafficLightColor.Green,
-      [TrafficLights.West]: TrafficLightColor.Red
+      [North]: TrafficLightColor.Green,
+      [East]: TrafficLightColor.Red,
+      [South]: TrafficLightColor.Green,
+      [West]: TrafficLightColor.Red
     })
 
     const config = {
       clock: sinon.useFakeTimers(),
+      duration: 1000 * 60 * 30,
       turnDuration: 1000 * 60 * 5,
       yellowDuration: 1000 * 30,
       callback
@@ -32,11 +34,6 @@ describe('traffic lights', function() {
 
     return { config, controller }
   }
-
-  // it('should start with north and south as green and east and west as red', function () {
-  //   const { intersection } = createIntersection();
-  //   expectTrafficColors(intersection, Green, Red, Green, Red);
-  // })
 
   it('should automatically change the lights from green to red every five minutes', function () {
     const spy = sinon.spy()
@@ -48,10 +45,10 @@ describe('traffic lights', function() {
 
     expect(spy).to.be.calledTwice // Green -> Yellow -> Red
     expect(spy).to.be.calledWith({
-      [TrafficLights.North]: Red,
-      [TrafficLights.East]: Green,
-      [TrafficLights.South]: Red,
-      [TrafficLights.West]: Green
+      [North]: Red,
+      [East]: Green,
+      [South]: Red,
+      [West]: Green
     })
   })
 
@@ -76,10 +73,10 @@ describe('traffic lights', function() {
 
     expect(spy).to.be.calledOnce // Green -> Yellow
     expect(spy).to.be.calledWith({
-      [TrafficLights.North]: Yellow,
-      [TrafficLights.East]: Red,
-      [TrafficLights.South]: Yellow,
-      [TrafficLights.West]: Red
+      [North]: Yellow,
+      [East]: Red,
+      [South]: Yellow,
+      [West]: Red
     })
   })
 
@@ -91,23 +88,71 @@ describe('traffic lights', function() {
 
     config.clock.tick(config.turnDuration - config.yellowDuration)
     expect(spy).to.be.calledWith({
-      [TrafficLights.North]: Yellow,
-      [TrafficLights.East]: Red,
-      [TrafficLights.South]: Yellow,
-      [TrafficLights.West]: Red
+      [North]: Yellow,
+      [East]: Red,
+      [South]: Yellow,
+      [West]: Red
     })
 
     config.clock.tick(config.yellowDuration)
     expect(spy).to.be.calledWith({
-      [TrafficLights.North]: Red,
-      [TrafficLights.East]: Green,
-      [TrafficLights.South]: Red,
-      [TrafficLights.West]: Green
+      [North]: Red,
+      [East]: Green,
+      [South]: Red,
+      [West]: Green
     })
 
     controller.stop()
 
     expect(spy).to.be.calledTwice
+
+  })
+
+  it('should not change state when the controller has stopped', function () {
+    const spy = sinon.spy()
+    const { config, controller } = createIntersectionController(spy)
+    controller.start()
+    controller.stop()
+    config.clock.tick(1)
+
+    expect(spy).to.not.have.been.called
+  })
+
+  it('should output as expected for thirty minutes with default config', function () {
+    const spy = sinon.spy()
+    const { config, controller } = createIntersectionController(spy)
+
+    controller.start()
+    config.clock.tick(config.duration)
+    controller.stop()
+
+    const getOutput = (north, east, south, west) => {
+      return {
+        [North]: north,
+        [East]: east,
+        [South]: south,
+        [West]: west
+      }
+    }
+
+    const calls = spy.getCalls()
+    const input = calls.map(call => call.args[0])
+    const output = [
+      getOutput(Yellow, Red, Yellow, Red), // 1
+      getOutput(Red, Green, Red, Green),   // 2
+      getOutput(Red, Yellow, Red, Yellow), // 3
+      getOutput(Green, Red, Green, Red),   // 4
+      getOutput(Yellow, Red, Yellow, Red), // 5
+      getOutput(Red, Green, Red, Green),   // 6
+      getOutput(Red, Yellow, Red, Yellow), // 7
+      getOutput(Green, Red, Green, Red),   // 8
+      getOutput(Yellow, Red, Yellow, Red), // 9
+      getOutput(Red, Green, Red, Green),   // 10
+      getOutput(Red, Yellow, Red, Yellow), // 11
+      getOutput(Green, Red, Green, Red)    // 12
+    ]
+
+    expect(input).to.deep.equal(output)
 
   })
 
